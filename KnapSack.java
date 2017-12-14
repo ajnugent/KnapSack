@@ -1,3 +1,9 @@
+/*
+Jackie Nugent 
+Project 6 CS4050 Algorithms
+Fall 2017
+
+*/
 import java.io.*;
 import java.util.*;
 
@@ -45,8 +51,8 @@ public class KnapSack{
 					profitweight = profit/weight;
 				
 					
-					items[0][j] = profit; //profit of item in column 2
-					items[1][j] = weight; //weight of item in column 3
+					items[0][j] = profit; //profit of item
+					items[1][j] = weight; //weight of item 
 					items[2][j] = profitweight; // Pi/Wi
 					
 					j++;
@@ -56,7 +62,7 @@ public class KnapSack{
 				
 			}
 			
-			//printMatrix(items, itemCount); //checking 
+			//printMatrix(items, itemCount); //checking purposes  
 			in.close(); //close the file 
 		
 		}catch(Exception e){
@@ -113,7 +119,7 @@ public class KnapSack{
             node.cantUse = new ArrayList<>();
             node = GetBound(node, false);
             activeNodes.add(node);
-            BranchAndBound(node);
+            BranchBound(node);
         } else {
             System.out.println("Oops! Active Tree");
         }
@@ -122,20 +128,20 @@ public class KnapSack{
 
 
 	//----------------------------------BRANCH + BOUND -----------------------------------
-	public static void BranchAndBound(Node parent) {
+	public static void BranchBound(Node parent) {
 
-        if (parent.level == (items[2].length) && parent == FindBest()) {
-            PrintNodes(parent, "*** WINNER ***");
+        if (parent.level == (items[2].length) && parent == BestOption()) {
+            PrintNodes(parent, "*** BEST NODE ***");
         }
-        else if (parent.weight == capacity && parent == FindBest()){
-            PrintNodes(parent, "*** WINNER ***");
+        else if (parent.weight == capacity && parent == BestOption()){
+            PrintNodes(parent, "*** BEST NODE ***");
         }
         else {
             PrintNodes(parent, "Exploring");
             GenerateChildren(parent);
-            BranchAndBound(FindBest());
+            BranchBound(BestOption());
         }
-    }//end BranchAndBound
+    }//end BranchBound
 	
 	//---------------------------------- GET BOUND --------------------------------------
 	    public static Node GetBound(Node node, Boolean left) {
@@ -187,56 +193,78 @@ public class KnapSack{
    
     //---------------------------------- GENERATE CHILDREN --------------------------------------
     public static void GenerateChildren(Node parent) {
-
+//
         // Left Child
         Node node = new Node();
 
         node.items = new ArrayList<Integer>(parent.items);
+       
         node.level = parent.level + 1;
+       
         node.profit = parent.profit;
+       
         node.weight = parent.weight;
+       
         nodeCount++;
+       
         node.nodeNum = nodeCount;
+       
         node.cantUse = new ArrayList<Integer>(parent.cantUse);
+       
         node.cantUse.add(node.level);
+       
         node = GetBound(node, true);
+       
         activeNodes.add(node);
-        PrintNodes(node, "    Left");
+       
+        PrintNodes(node, "    Left child is");
 
         // Right Child
         Node nodeR = new Node();
 
         nodeR.items = new ArrayList<Integer>(parent.items);
+        
         nodeR.level = parent.level + 1;
+        
         nodeR.profit = parent.profit;
+        
         nodeR.weight = parent.weight;
+        
         nodeR.cantUse = new ArrayList<Integer>(parent.cantUse);
 
         nodeCount++;
+        
         nodeR.nodeNum = nodeCount;
+        
         nodeR.items.add(node.level);
+        
         nodeR.profit += items[0][nodeR.level - 1];
+        
         nodeR.weight += items[1][nodeR.level - 1];
+        
+        //check to see if it exceeds capacity
         if (nodeR.weight > capacity){
             nodeR.profit = -1;
             nodeR.bound = -1;
-            PrintNodes(nodeR, "    Right");
-            System.out.println("Pruned because to heavy");
+            PrintNodes(nodeR, "    Right child is");
+            System.out.println("\tPruned because too heavy");
             activeNodes.remove(nodeR);
         }
+        
         else {
             nodeR = GetBound(nodeR, false);
             activeNodes.add(nodeR);
             PrintNodes(nodeR, "    Right");
         }
+        
         activeNodes.remove(parent);
         System.out.println("");
 
 
         }//end GenerateChildren
     
-	//---------------------------------- FIND BEST --------------------------------------
-    public static Node FindBest() {
+	//---------------------------------- FIND BEST OPTION --------------------------------
+    public static Node BestOption() {
         Node best = null;
         for (int i = 0; i < activeNodes.size(); i++) {
             if (best == null) {
@@ -248,7 +276,7 @@ public class KnapSack{
         }
         return best;
 
-    }//end FindBest
+    }//end BestOption
 
 
 	//---------------------------------- PRINT NODES--------------------------------------
@@ -273,11 +301,11 @@ public class KnapSack{
         noUse += "]";
         
         System.out.println(who + " Node " + node.nodeNum +
-                ":\tITEMS: " + itemString +
-                "\tLEVEL: " + node.level +
-                "\tPROFIT: " + node.profit +
-                "\tWEIGHT: " + node.weight +
-                "\tBOUND: " + node.bound + "\t----->" + "\tItems Not Used: " + noUse);
+                ": ITEMS: " + itemString +
+                " LEVEL: " + node.level +
+                " PROFIT: " + node.profit +
+                " WEIGHT: " + node.weight +
+                " BOUND: " + node.bound + "\t----->" + "\tItems Not Used: " + noUse);
     }//end PrintNodes 
   
 	
