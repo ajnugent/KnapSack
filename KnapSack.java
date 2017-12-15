@@ -10,10 +10,11 @@ import java.util.*;
 public class KnapSack{
 	
 
-	static int[][] items; //holds our table 
+	static double[][] items; //holds our table 
 	static int COLUMNS = 3;
 	
-	static int capacity, itemCount, weight, profitweight, profit;
+	static int capacity, itemCount;
+	static double weight, profit, profitweight;
 	static int nodeCount = 1; //start nodeCount at 1 for sanity 
 	
 	static ArrayList<Node> activeNodes = new ArrayList<>();
@@ -38,7 +39,7 @@ public class KnapSack{
 			
 			//read in the txt file and put info in a table 
 			int count = 1;
-			items = new int[COLUMNS][itemCount];			
+			items = new double[COLUMNS][itemCount];			
 			
 			int j = 0;
 			while(in.hasNext())
